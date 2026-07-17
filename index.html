@@ -1,0 +1,111 @@
+<!DOCTYPE html>
+<html lang="fr">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Enerwatch — Autorisation FusionSolar</title>
+<style>
+  * { box-sizing: border-box; margin: 0; padding: 0; }
+  body {
+    font-family: -apple-system, 'Segoe UI', Roboto, sans-serif;
+    background: #0D1117;
+    color: #E6EDF3;
+    min-height: 100vh;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    padding: 20px;
+  }
+  .card {
+    background: #161B22;
+    border: 1px solid rgba(255,255,255,0.1);
+    border-radius: 12px;
+    padding: 40px;
+    max-width: 560px;
+    width: 100%;
+    text-align: center;
+  }
+  h1 { font-size: 22px; margin-bottom: 8px; }
+  .subtitle { color: #7D8590; font-size: 14px; margin-bottom: 32px; }
+  .code-box {
+    background: #0D1117;
+    border: 2px solid #22C55E;
+    border-radius: 8px;
+    padding: 20px;
+    font-family: 'Courier New', monospace;
+    font-size: 18px;
+    font-weight: bold;
+    color: #22C55E;
+    word-break: break-all;
+    margin-bottom: 20px;
+  }
+  .code-box.error {
+    border-color: #E74C3C;
+    color: #E74C3C;
+    font-size: 14px;
+    font-weight: normal;
+  }
+  button {
+    background: #22C55E;
+    color: #0D1117;
+    border: none;
+    padding: 12px 32px;
+    border-radius: 8px;
+    font-size: 15px;
+    font-weight: 600;
+    cursor: pointer;
+  }
+  button:hover { background: #16A34A; }
+  .success-msg {
+    color: #22C55E;
+    font-size: 13px;
+    margin-top: 12px;
+    opacity: 0;
+    transition: opacity 0.3s;
+  }
+  .success-msg.visible { opacity: 1; }
+  .hint { color: #7D8590; font-size: 12px; margin-top: 24px; line-height: 1.5; }
+</style>
+</head>
+<body>
+  <div class="card">
+    <h1>⚡ Enerwatch</h1>
+    <div class="subtitle">Autorisation FusionSolar OAuth 2.0</div>
+
+    <div id="code-box" class="code-box">Recherche du code…</div>
+    <button id="copy-btn" onclick="copyCode()" style="display:none;">📋 Copier le code</button>
+    <div id="success" class="success-msg">✓ Code copié dans le presse-papier</div>
+
+    <div class="hint">
+      Ce code d'autorisation est à usage unique et expire rapidement.<br>
+      Collez-le dans la configuration Enerwatch pour finaliser la connexion FusionSolar.
+    </div>
+  </div>
+
+<script>
+  const params = new URLSearchParams(window.location.search);
+  const code = params.get('code');
+  const error = params.get('error');
+  const box = document.getElementById('code-box');
+  const btn = document.getElementById('copy-btn');
+
+  if (code) {
+    box.textContent = code;
+    btn.style.display = 'inline-block';
+  } else if (error) {
+    box.classList.add('error');
+    box.textContent = 'Erreur d\'autorisation : ' + error + (params.get('error_description') ? ' — ' + params.get('error_description') : '');
+  } else {
+    box.classList.add('error');
+    box.textContent = 'Aucun code d\'autorisation trouvé dans l\'URL. Cette page doit être ouverte via le processus d\'autorisation FusionSolar.';
+  }
+
+  function copyCode() {
+    navigator.clipboard.writeText(code).then(() => {
+      document.getElementById('success').classList.add('visible');
+      setTimeout(() => document.getElementById('success').classList.remove('visible'), 3000);
+    });
+  }
+</script>
+</body>
+</html>
